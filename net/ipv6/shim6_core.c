@@ -376,7 +376,6 @@ static void shim6_destroy(struct xfrm_state *x)
 /* If @loc is a suitable locator for 
  * use inside shim6, notifies the daemon that it is now available.
  */
-
 static void add_glob_locator(struct inet6_ifaddr* loc) 
 {
 	struct in6_addr loaddr=IN6ADDR_LOOPBACK_INIT;
@@ -395,7 +394,6 @@ static void add_glob_locator(struct inet6_ifaddr* loc)
 /*Deletes a shim6 glob locator
  */
 static void del_glob_locator(struct inet6_ifaddr* loc)
-
 {
 	struct in6_addr loaddr=IN6ADDR_LOOPBACK_INIT;
 	/*The loopback address cannot be sent as a locator.*/
