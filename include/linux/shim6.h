@@ -44,6 +44,7 @@ struct shim6_data {
 
 	uint16_t            tka;   /*Keepalive timeout*/
 	uint16_t            tsend; /*Send timeout*/
+
 /*flags*/
 	__u8		    flags;
 #define SHIM6_DATA_INBOUND   0x1 /* context is inbound*/
@@ -66,7 +67,6 @@ struct shim6_data {
 #define SHIM6_DATA_LENGTH(data) ((unsigned int)                         \
                                  (sizeof(*(data))+                      \
 				  (data)->npaths*sizeof(struct shim6_path))) 
-
 
 /*type values for shim6 messages*/
 enum shim6_types_init {
