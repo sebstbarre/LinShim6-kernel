@@ -24,6 +24,7 @@
 #include <asm/byteorder.h>
 #include <asm/types.h>
 #include <net/if_inet6.h>
+
 #endif /*__KERNEL__*/
 #include <linux/netlink.h>
 
