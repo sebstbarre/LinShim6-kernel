@@ -282,6 +282,8 @@ enum xfrm_attr_type_t {
 	XFRMA_MIGRATE,
 	XFRMA_ALG_AEAD,		/* struct xfrm_algo_aead */
 	XFRMA_SHIM6,            /*Shim6 data*/
+	XFRM_SHIM6_TKA,         /*Shim6 Keepalive timer*/
+	XFRM_SHIM6_TSEND,       /*Shim6 Send timer*/
 	__XFRMA_MAX
 
 #define XFRMA_MAX (__XFRMA_MAX - 1)
