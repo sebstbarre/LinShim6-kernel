@@ -17,10 +17,6 @@ obj-$(CONFIG_IPV6_SHIM6) += shim6.o xfrm6_mode_shim6.o shim6_pkt_listener.o
 shim6-objs := 	shim6_core.o reap.o  \
 		shim6_netlink.o shim6_exthdrs.o
 
-obj-$(CONFIG_IPV6_SHIM6) += shim6.o xfrm6_mode_shim6.o 
-shim6-objs := 	shim6_core.o reap.o  \
-		shim6_pkt_listener.o shim6_netlink.o shim6_exthdrs.o
-
 ipv6-$(CONFIG_XFRM) += xfrm6_policy.o xfrm6_state.o xfrm6_input.o \
 	xfrm6_output.o
 ipv6-$(CONFIG_NETFILTER) += netfilter.o

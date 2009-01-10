@@ -372,7 +372,6 @@ static void shim6_destroy(struct xfrm_state *x)
 	}
 }
 
-
 /* If @loc is a suitable locator for 
  * use inside shim6, notifies the daemon that it is now available.
  */
@@ -750,6 +749,4 @@ static void __exit shim6_exit(void)
 }
 
 module_exit(shim6_exit);
-
-
 MODULE_LICENSE("GPL");
