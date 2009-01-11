@@ -574,6 +574,67 @@ static inline int selector_cmp(struct xfrm_selector *s1, struct xfrm_selector *s
 	return 0;
 }
 
+/**
+ * This function must be called if two xfrm policies have same selector
+ *  and same priority. It merges the xfrm_vec of the new policy into
+ *  into that of the old policy. After that, the new policy is supposed to be
+ *  discarded (only its xfrm_vec will have been taken into account).
+ *  Note that this function is the one that decides the transformation order.
+ *  It is very simple at the moment and will probably be improved later.
+ * 
+ *  This functin must be called under the xfrm_policy_lock (write lock)
+ *
+ *  Returns 1 if the new policy must be deleted and the policy handling 
+ *            terminated
+ *  Return 2 if normal management must be done afterwards
+ */
+int __merge_xfrm_vec(struct xfrm_policy *old, struct xfrm_policy *new, 
+		     int excl, struct xfrm_policy **delpol) 
+{
+	if (new->xfrm_nr==1 && 
+	    new->xfrm_vec[0].id.proto==IPPROTO_SHIM6) {
+		int j;
+		if (old->xfrm_vec[0].id.proto==IPPROTO_SHIM6) {
+			/*The Shim6 policy is already there, 
+			  two options:*/				
+			if (excl) return -EEXIST; /*the same policy 
+						    added twice 
+						    erroneously*/
+			BUG_ON(!delpol);
+			*delpol=old; /*Policy update, delete the 
+				       old one*/
+			return 2;
+		}
+
+		for (j=old->xfrm_nr-1;j>=0;j--) {
+			memcpy(&old->xfrm_vec[j+1],&old->xfrm_vec[j],
+			       sizeof(struct xfrm_tmpl));
+		}
+		memcpy(&old->xfrm_vec[0],&new->xfrm_vec[0],
+		       sizeof(struct xfrm_tmpl));
+		return 1;
+	}
+	else if (old->xfrm_nr>=1 &&
+		 old->xfrm_vec[0].id.proto==IPPROTO_SHIM6) {
+		int j;
+		/*We know that the new does not contain Shim6 xfrm, because it
+		  would have been manage in the previous if*/
+		for (j=new->xfrm_nr-1;j>=0;j--) {
+			memcpy(&new->xfrm_vec[j+1],&new->xfrm_vec[j],
+			       sizeof(struct xfrm_tmpl));
+		}
+		memcpy(&new->xfrm_vec[0],&old->xfrm_vec[0],
+		       sizeof(struct xfrm_tmpl));
+		/*we let insert the new one, and we mark the old one for 
+		  deletion*/
+		BUG_ON(!delpol); /*To verify that it is the first time we
+				   mark a pol for deletion*/
+		*delpol=old;
+		return 1;
+	}
+	else return 2;
+}
+
 int xfrm_policy_insert(int dir, struct xfrm_policy *policy, int excl)
 {
 	struct xfrm_policy *pol;
@@ -587,6 +648,16 @@ int xfrm_policy_insert(int dir, struct xfrm_policy *policy, int excl)
 	delpol = NULL;
 	newpos = NULL;
 	hlist_for_each_entry(pol, entry, chain, bydst) {
+		if (!selector_cmp(&pol->selector, &policy->selector) && 
+		    policy->priority == pol->priority) {
+			int ans;
+			ans=__merge_xfrm_vec(pol,policy,excl,&delpol);
+			if (ans==1 || ans==-EEXIST) {
+				write_unlock_bh(&xfrm_policy_lock);
+				return ans;
+			}
+		}
+
 		if (pol->type == policy->type &&
 		    !selector_cmp(&pol->selector, &policy->selector) &&
 		    xfrm_sec_ctx_match(pol->security, policy->security) &&
@@ -595,6 +666,7 @@ int xfrm_policy_insert(int dir, struct xfrm_policy *policy, int excl)
 				write_unlock_bh(&xfrm_policy_lock);
 				return -EEXIST;
 			}
+			BUG_ON(!delpol);
 			delpol = pol;
 			if (policy->priority > pol->priority)
 				continue;
