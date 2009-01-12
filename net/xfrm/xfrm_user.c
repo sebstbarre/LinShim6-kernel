@@ -1217,7 +1217,7 @@ static int xfrm_add_policy(struct sk_buff *skb, struct nlmsghdr *nlh,
 		dst_negative_advice((struct dst_entry**)&rt);
 		}*/
 
-	if (err=1) { /*policy merge*/
+	if (err==1) { /*policy merge*/
 		security_xfrm_policy_free(xp->security);
 		kfree(xp);
 		return 0;
