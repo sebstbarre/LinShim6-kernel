@@ -643,11 +643,14 @@ int xfrm_policy_insert(int dir, struct xfrm_policy *policy, int excl)
 	struct hlist_node *entry, *newpos;
 	struct dst_entry *gc_list;
 
+	printk(KERN_CRIT "Entering %s\n",__FUNCTION__);
+
 	write_lock_bh(&xfrm_policy_lock);
 	chain = policy_hash_bysel(&policy->selector, policy->family, dir);
 	delpol = NULL;
 	newpos = NULL;
 	hlist_for_each_entry(pol, entry, chain, bydst) {
+		printk(KERN_CRIT "step 1\n");
 		if (!selector_cmp(&pol->selector, &policy->selector) && 
 		    policy->priority == pol->priority) {
 			int ans;
@@ -657,6 +660,7 @@ int xfrm_policy_insert(int dir, struct xfrm_policy *policy, int excl)
 				return ans;
 			}
 		}
+		printk(KERN_CRIT "step 2\n");
 
 		if (pol->type == policy->type &&
 		    !selector_cmp(&pol->selector, &policy->selector) &&
@@ -666,6 +670,7 @@ int xfrm_policy_insert(int dir, struct xfrm_policy *policy, int excl)
 				write_unlock_bh(&xfrm_policy_lock);
 				return -EEXIST;
 			}
+			printk(KERN_CRIT "step 3\n");
 			BUG_ON(!delpol);
 			delpol = pol;
 			if (policy->priority > pol->priority)
@@ -673,15 +678,19 @@ int xfrm_policy_insert(int dir, struct xfrm_policy *policy, int excl)
 		} else if (policy->priority >= pol->priority) {
 			newpos = &pol->bydst;
 			continue;
+			printk(KERN_CRIT "step 4\n");
 		}
 		if (delpol)
 			break;
 	}
-	if (newpos)
+	if (newpos) {
+		printk(KERN_CRIT "new pos selected\n");
 		hlist_add_after(newpos, &policy->bydst);
-	else
+	}
+	else {
+		printk(KERN_CRIT "adding to head\n");
 		hlist_add_head(&policy->bydst, chain);
-
+	}
 	xfrm_pol_hold(policy);
 	xfrm_policy_count[dir]++;
 	atomic_inc(&flow_cache_genid);
