@@ -21,6 +21,19 @@ menuconfig IPV6
 
 if IPV6
 
+config IPV6_AUTOCONF
+       bool "IPv6 autoconfiguration"
+       depends on IPV6
+       default y
+       ---help---
+	IPv6 address autoconfiguration
+	Since disabling autoconf through /proc/sys/ seems not quite stable	
+	(sometimes addresses are nevertheless created for some reason),
+	Setting no here allows simply not compiling the autoconf code, so as
+	to ensure we won't get autoconfigured addresses ever.
+
+	if unsure, say Y.
+
 config IPV6_PRIVACY
 	bool "IPv6: Privacy Extensions support"
 	---help---

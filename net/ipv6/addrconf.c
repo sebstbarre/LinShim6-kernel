@@ -124,7 +124,9 @@ static int desync_factor = MAX_DESYNC_FACTOR * HZ;
 #endif
 
 static int ipv6_generate_eui64(u8 *eui, struct net_device *dev);
+#ifdef CONFIG_IPV6_AUTOCONF
 static int ipv6_count_addresses(struct inet6_dev *idev);
+#endif
 
 /*
  *	Configured unicast address hash table
@@ -163,7 +165,7 @@ static struct ipv6_devconf ipv6_devconf __read_mostly = {
 	.mtu6			= IPV6_MIN_MTU,
 	.accept_ra		= 1,
 	.accept_redirects	= 1,
-	.autoconf		= 1,
+	.autoconf		= 0,
 	.force_mld_version	= 0,
 	.dad_transmits		= 1,
 	.rtr_solicits		= MAX_RTR_SOLICITATIONS,
@@ -198,7 +200,7 @@ static struct ipv6_devconf ipv6_devconf_dflt __read_mostly = {
 	.mtu6			= IPV6_MIN_MTU,
 	.accept_ra		= 1,
 	.accept_redirects	= 1,
-	.autoconf		= 1,
+	.autoconf		= 0,
 	.dad_transmits		= 1,
 	.rtr_solicits		= MAX_RTR_SOLICITATIONS,
 	.rtr_solicit_interval	= RTR_SOLICITATION_INTERVAL,
@@ -1268,6 +1270,7 @@ int ipv6_get_lladdr(struct net_device *dev, struct in6_addr *addr,
 	return err;
 }
 
+#ifdef CONFIG_IPV6_AUTOCONF
 static int ipv6_count_addresses(struct inet6_dev *idev)
 {
 	int cnt = 0;
@@ -1279,6 +1282,7 @@ static int ipv6_count_addresses(struct inet6_dev *idev)
 	read_unlock_bh(&idev->lock);
 	return cnt;
 }
+#endif
 
 int ipv6_chk_addr(struct net *net, struct in6_addr *addr,
 		  struct net_device *dev, int strict)
@@ -1584,6 +1588,7 @@ static int ipv6_generate_eui64(u8 *eui, struct net_device *dev)
 	return -1;
 }
 
+#ifdef CONFIG_IPV6_AUTOCONF
 static int ipv6_inherit_eui64(u8 *eui, struct inet6_dev *idev)
 {
 	int err = -1;
@@ -1600,6 +1605,7 @@ static int ipv6_inherit_eui64(u8 *eui, struct inet6_dev *idev)
 	read_unlock_bh(&idev->lock);
 	return err;
 }
+#endif
 
 #ifdef CONFIG_IPV6_PRIVACY
 /* (re)generation of randomized interface identifier (RFC 3041 3.2, 3.5) */
@@ -1865,7 +1871,7 @@ void addrconf_prefix_rcv(struct net_device *dev, u8 *opt, int len)
 	}
 
 	/* Try to figure out our local address for this prefix */
-
+#ifdef CONFIG_IPV6_AUTOCONF
 	if (pinfo->autoconf && in6_dev->cnf.autoconf) {
 		struct inet6_ifaddr * ifp;
 		struct in6_addr addr;
@@ -2006,6 +2012,7 @@ ok:
 			addrconf_verify(0);
 		}
 	}
+#endif /*CONFIG_IPV6_AUTOCONF*/
 	inet6_prefix_notify(RTM_NEWPREFIX, in6_dev, pinfo);
 	in6_dev_put(in6_dev);
 }
