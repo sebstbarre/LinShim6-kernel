@@ -591,6 +591,7 @@ static inline int selector_cmp(struct xfrm_selector *s1, struct xfrm_selector *s
 int __merge_xfrm_vec(struct xfrm_policy *old, struct xfrm_policy *new, 
 		     int excl, struct xfrm_policy **delpol) 
 {
+	printk("Entering %s\n",__FUNCTION__);
 	if (new->xfrm_nr==1 && 
 	    new->xfrm_vec[0].id.proto==IPPROTO_SHIM6) {
 		int j;
