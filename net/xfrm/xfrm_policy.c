@@ -600,7 +600,10 @@ int __merge_xfrm_vec(struct xfrm_policy *old, struct xfrm_policy *new,
 			if (excl) return -EEXIST; /*the same policy 
 						    added twice 
 						    erroneously*/
-			BUG_ON(!delpol);
+			/*If delpol is already defined, we have a problem, 
+			  since we can only delete one and it seems like 
+			  we must remove two*/
+			BUG_ON(delpol);
 			*delpol=old; /*Policy update, delete the 
 				       old one*/
 			return 2;
@@ -627,8 +630,8 @@ int __merge_xfrm_vec(struct xfrm_policy *old, struct xfrm_policy *new,
 		       sizeof(struct xfrm_tmpl));
 		/*we let insert the new one, and we mark the old one for 
 		  deletion*/
-		BUG_ON(!delpol); /*To verify that it is the first time we
-				   mark a pol for deletion*/
+		BUG_ON(delpol); /*To verify that it is the first time we
+				  mark a pol for deletion*/
 		*delpol=old;
 		return 1;
 	}
@@ -671,7 +674,7 @@ int xfrm_policy_insert(int dir, struct xfrm_policy *policy, int excl)
 				return -EEXIST;
 			}
 			printk(KERN_CRIT "step 3\n");
-			BUG_ON(!delpol);
+			BUG_ON(delpol);
 			delpol = pol;
 			if (policy->priority > pol->priority)
 				continue;
