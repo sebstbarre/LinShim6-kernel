@@ -595,34 +595,14 @@ int __merge_xfrm_vec(struct xfrm_policy *old, struct xfrm_policy *new,
 	if (new->xfrm_nr==1 && 
 	    new->xfrm_vec[0].id.proto==IPPROTO_SHIM6) {
 		int j;
-		printk(KERN_CRIT "step m1");
+		printk(KERN_CRIT "step m1\n");
 		if (old->xfrm_vec[0].id.proto==IPPROTO_SHIM6) {
-			printk(KERN_CRIT "step m2");
-			/*The Shim6 policy is already there, 
-			  two options:*/				
-			if (excl) return -EEXIST; /*the same policy 
-						    added twice 
-						    erroneously*/
-			printk(KERN_CRIT "step m3");
-			/*If delpol is already defined, we have a problem, 
-			  since we can only delete one and it seems like 
-			  we must remove two*/
-			printk("will delete pol:");
-			printk("  pol->type is %d\n",old->type);
-			printk("  saddr is " NIP6_FMT, 
-			       NIP6(*(struct in6_addr*)(&old->selector.saddr)));
-			printk("  daddr is " NIP6_FMT, 
-			       NIP6(*(struct in6_addr*)(&old->selector.daddr)));
-			printk("  priority is %d",old->priority);
-			printk("  proto is %d",old->selector.proto);
-			printk("  ifindex is %d",old->selector.ifindex);
-
-			/*BUG_ON(delpol);*/
-			*delpol=old; /*Policy update, delete the 
-				       old one*/
+			printk(KERN_CRIT "step m2\n");
+			/*Case of an already existing policy. This will be
+			  dealt with by xfrm_policy_insert*/
 			return 2;
 		}
-		printk(KERN_CRIT "step m4");
+		printk(KERN_CRIT "step m4\n");
 
 		for (j=old->xfrm_nr-1;j>=0;j--) {
 			memcpy(&old->xfrm_vec[j+1],&old->xfrm_vec[j],
@@ -635,9 +615,9 @@ int __merge_xfrm_vec(struct xfrm_policy *old, struct xfrm_policy *new,
 	else if (old->xfrm_nr>=1 &&
 		 old->xfrm_vec[0].id.proto==IPPROTO_SHIM6) {
 		int j;
-		printk(KERN_CRIT "step m5");
+		printk(KERN_CRIT "step m5\n");
 		/*We know that the new does not contain Shim6 xfrm, because it
-		  would have been manage in the previous if*/
+		  would have been managed in the previous if*/
 		for (j=new->xfrm_nr-1;j>=0;j--) {
 			memcpy(&new->xfrm_vec[j+1],&new->xfrm_vec[j],
 			       sizeof(struct xfrm_tmpl));
@@ -652,7 +632,7 @@ int __merge_xfrm_vec(struct xfrm_policy *old, struct xfrm_policy *new,
 		return 1;
 	}
 	else {
-		printk(KERN_CRIT "step m6");
+		printk(KERN_CRIT "step m6\n");
 		return 2;
 	}
 }
@@ -682,8 +662,8 @@ int xfrm_policy_insert(int dir, struct xfrm_policy *policy, int excl)
 				return ans;
 			}
 		}
-		printk(KERN_CRIT "step 2\n");
-
+		printk(KERN_CRIT "step 2\n");	       		
+		
 		if (pol->type == policy->type &&
 		    !selector_cmp(&pol->selector, &policy->selector) &&
 		    xfrm_sec_ctx_match(pol->security, policy->security) &&
@@ -693,16 +673,16 @@ int xfrm_policy_insert(int dir, struct xfrm_policy *policy, int excl)
 				return -EEXIST;
 			}
 			printk(KERN_CRIT "step 3\n");
-			printk("will delete pol:");
+			printk("will delete pol:\n");
 			printk("  pol->type is %d\n",pol->type);
-			printk("  saddr is " NIP6_FMT, 
+			printk("  saddr is " NIP6_FMT "\n", 
 			       NIP6(*(struct in6_addr*)(&pol->selector.saddr)));
-			printk("  daddr is " NIP6_FMT, 
+			printk("  daddr is " NIP6_FMT "\n", 
 			       NIP6(*(struct in6_addr*)(&pol->selector.daddr)));
-			printk("  priority is %d",pol->priority);
-			printk("  proto is %d",pol->selector.proto);
-			printk("  ifindex is %d",pol->selector.ifindex);
-			printk("  dir is %d",dir);			
+			printk("  priority is %d\n",pol->priority);
+			printk("  proto is %d\n",pol->selector.proto);
+			printk("  ifindex is %d\n",pol->selector.ifindex);
+			printk("  dir is %d\n",dir);			
 			/*BUG_ON(delpol);*/
 			delpol = pol;
 			if (policy->priority > pol->priority)
