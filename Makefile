@@ -332,7 +332,9 @@ KBUILD_CPPFLAGS := -D__KERNEL__ $(LINUXINCLUDE)
 
 KBUILD_CFLAGS   := -Wall -Wundef -Wstrict-prototypes -Wno-trigraphs \
 		   -fno-strict-aliasing -fno-common \
-		   -Werror-implicit-function-declaration -fno-tree-scev-cprop
+		   -Werror-implicit-function-declaration 
+
+KBUILD_CFLAGS += $(shell if [ $(call cc-version) -gt 0402 ] ; then echo $(call cc-option,-fno-tree-scev-cprop); fi ;)
 
 KBUILD_AFLAGS   := -D__ASSEMBLY__
 
