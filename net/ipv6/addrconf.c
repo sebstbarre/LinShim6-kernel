@@ -3941,11 +3941,12 @@ errout:
 
 static void __ipv6_ifa_notify(int event, struct inet6_ifaddr *ifp)
 {
-	printk("Inserting new address : " NIP6_FMT "\n",NIP6(ifp->addr));
 	inet6_ifa_notify(event ? : RTM_NEWADDR, ifp);
 
 	switch (event) {
 	case RTM_NEWADDR:
+		printk("Inserting new address : " NIP6_FMT "\n",NIP6(ifp->addr));
+	
 		/*
 		 * If the address was optimistic
 		 * we inserted the route at the start of
@@ -3961,6 +3962,7 @@ static void __ipv6_ifa_notify(int event, struct inet6_ifaddr *ifp)
 #endif
 		break;
 	case RTM_DELADDR:
+		printk("Deleting address : " NIP6_FMT "\n",NIP6(ifp->addr));
 		if (ifp->idev->cnf.forwarding)
 			addrconf_leave_anycast(ifp);
 		addrconf_leave_solict(ifp->idev, &ifp->addr);
