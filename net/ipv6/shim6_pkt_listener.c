@@ -271,7 +271,7 @@ static unsigned int shim6list_local_out(unsigned int hooknum,
 	struct ipv6hdr* nh=ipv6_hdr(skb);
 	int trigger=0; /*1 if we need to trigger a ctx establishment*/
 	
-	if (!check_packet(skb)) return NF_ACCEPT;
+	if (!out || !check_packet(skb)) return NF_ACCEPT;
 
 	/*Lookup and creation must be atomic because several packets
 	  (from different applications)
