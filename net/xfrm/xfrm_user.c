@@ -1208,14 +1208,14 @@ static int xfrm_add_policy(struct sk_buff *skb, struct nlmsghdr *nlh,
 	xfrm_audit_policy_add(xp, err ? 0 : 1, loginuid, sessionid, sid);
 
 	/*--SB: This flushes the dst cache, so that a new route for Shim6
-	 locators can be computed. I try to remove this for now, we'll see if
-	 it is still necessary or not.*/
-/*	if (xp->selector.family==AF_INET6) {
+	 locators can be computed.*/
+	if (xp->selector.family==AF_INET6) {
 		struct rt6_info *rt;
-		rt=rt6_lookup((struct in6_addr*)&xp->selector.daddr.a6,
+		rt=rt6_lookup(&init_net,
+			      (struct in6_addr*)&xp->selector.daddr.a6,
 			      (struct in6_addr*)&xp->selector.saddr.a6,0,0);
 		dst_negative_advice((struct dst_entry**)&rt);
-		}*/
+	}
 
 	if (err==1) { /*policy merge*/
 		security_xfrm_policy_free(xp->security);
