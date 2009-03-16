@@ -36,6 +36,7 @@ config IPV6_AUTOCONF
 
 config IPV6_PRIVACY
 	bool "IPv6: Privacy Extensions support"
+	depends on IPV6_AUTOCONF
 	---help---
 	  Privacy Extensions for Stateless Address Autoconfiguration in IPv6
 	  support.  With this option, additional periodically-alter 
