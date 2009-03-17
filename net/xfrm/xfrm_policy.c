@@ -576,13 +576,13 @@ static inline int selector_cmp(struct xfrm_selector *s1, struct xfrm_selector *s
 
 /**
  * This function must be called if two xfrm policies have same selector
- *  and same priority. It merges the xfrm_vec of the new policy into
+ *  and same priority. It merges the xfrm_vec of the new policy
  *  into that of the old policy. After that, the new policy is supposed to be
  *  discarded (only its xfrm_vec will have been taken into account).
  *  Note that this function is the one that decides the transformation order.
  *  It is very simple at the moment and will probably be improved later.
  * 
- *  This functin must be called under the xfrm_policy_lock (write lock)
+ *  This function must be called under the xfrm_policy_lock (write lock)
  *
  *  Returns 1 if the new policy must be deleted and the policy handling 
  *            terminated

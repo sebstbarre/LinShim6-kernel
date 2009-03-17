@@ -62,6 +62,11 @@ static int xfrm6_shim6_output(struct xfrm_state *x, struct sk_buff *skb)
 
 		x->lastused = get_seconds();
 	}
+#ifdef CONFIG_IPV6_SHIM6_DEBUG
+	else iph->flow_lbl[0]|=8; /*Tag packets, so that we know they
+				    went through this code*/
+#endif
+		
 	
 	return 0;
 }

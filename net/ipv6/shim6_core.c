@@ -173,6 +173,11 @@ static int shim6_output(struct xfrm_state *x, struct sk_buff *skb)
 	skb_push(skb, -skb_network_offset(skb));
 	iph = ipv6_hdr(skb);
 
+#ifdef CONFIG_IPV6_SHIM6_DEBUG
+	iph->flow_lbl[0]|=4; /*Tag packets, so that we know they
+				    went through this code*/
+#endif
+
 	/*If packet has already the shim6 header, it is a control packet
 	  we also ignore ICMPv6 packets*/
 	if (iph->nexthdr==IPPROTO_SHIM6 || iph->nexthdr==IPPROTO_ICMPV6)
