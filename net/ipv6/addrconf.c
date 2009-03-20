@@ -2095,6 +2095,11 @@ static int inet6_addr_add(struct net *net, int ifindex, struct in6_addr *pfx,
 
 	ASSERT_RTNL();
 
+	printk(KERN_INFO "adding address " NIP6_FMT 
+	       "with val lt %d, pref lt %d\n",
+	       NIP6(*pfx),
+	       valid_lft,prefered_lft);
+
 	if (plen > 128)
 		return -EINVAL;
 
