@@ -277,6 +277,12 @@ void reap_notify_in(struct reap_ctx* rctx)
 #ifdef CONFIG_IPV6_SHIM6_DEBUG
 	u32* art;
 
+	/*Manual trigger of artswitch*/
+	if (sysctl_shim6_artswitch) {
+		rctx->art_switch=1;
+		sysctl_shim6_artswitch=0;
+	}
+
 	/*Update timestamp*/
 	if (rctx->art_switch) {
 		/*Notifying daemon*/

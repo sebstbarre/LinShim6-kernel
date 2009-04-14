@@ -182,7 +182,9 @@ static inline int is_shim6_inbound(struct xfrm_state* x)
 		(x->shim6->flags & SHIM6_DATA_INBOUND));
 }
 
-extern int sysctl_shim6_tcphint; /*declared in shim6_static.c*/
-extern int sysctl_shim6_enabled; /*idem*/
+/*sysctl handles, declared in shim6_static.c*/
+extern int sysctl_shim6_tcphint; 
+extern int sysctl_shim6_enabled;
+extern int sysctl_shim6_artswitch;
 
 #endif /* _NET_SHIM6_H */

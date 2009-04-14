@@ -26,6 +26,13 @@
 int sysctl_shim6_enabled = 0; /*Will be enabled at the end of shim6 init*/
 int sysctl_shim6_tcphint = 0; /*if 0, disables TCP hint, by default it is
 				enabled at the end of shim6 init*/
+int sysctl_shim6_artswitch = 0 ; /*This is a handle for user space application
+				   to tell the kernel that an ART event 
+				   happened. It is reset by the kernel as soon
+				   as a packet is received on any context.
+				   This also means that this technique can only
+				   be used with *one* context living in the
+				   kernel*/
 
 
 static struct shim6_ops *shim6_fcts=NULL;
@@ -86,3 +93,4 @@ EXPORT_SYMBOL(shim6_xfrm_input_ct);
 
 EXPORT_SYMBOL(sysctl_shim6_enabled);
 EXPORT_SYMBOL(sysctl_shim6_tcphint);
+EXPORT_SYMBOL(sysctl_shim6_artswitch);

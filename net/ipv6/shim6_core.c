@@ -66,6 +66,14 @@ static ctl_table shim6_table[] = {
 		.proc_handler	= &proc_dointvec
 	},
 	{
+		.ctl_name	= CTL_UNNUMBERED,
+		.procname	= "art_switch",
+		.data		= &sysctl_shim6_artswitch,
+		.maxlen		= sizeof(int),
+		.mode		= 0644,
+		.proc_handler	= &proc_dointvec
+	},
+	{
 		.ctl_name       = CTL_UNNUMBERED,
 		.procname       = "tcphint",
 		.data           = &sysctl_shim6_tcphint,
@@ -714,6 +722,7 @@ static int __init shim6_init(void)
 	
 	sysctl_shim6_enabled=1;
 	sysctl_shim6_tcphint=1;
+	sysctl_shim6_artswitch=0;
 
 	/*...and allow user to play with (de)activation*/
 #ifdef CONFIG_SYSCTL
