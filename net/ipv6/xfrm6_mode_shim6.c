@@ -50,6 +50,13 @@ static int xfrm6_shim6_output(struct xfrm_state *x, struct sk_buff *skb)
 	u8 *prevhdr;
 	int hdr_len;
 
+#ifdef CONFIG_IPV6_SHIM6_DEBUG
+	iph->flow_lbl[0]|=16;
+#endif
+	/*Ensure that we do not touch shim6 control packets or ICMPv6 packets*/
+	if (iph->nexthdr==IPPROTO_SHIM6 || iph->nexthdr==IPPROTO_ICMPV6) 
+		return 0;
+
 	if (x->shim6->paths[x->shim6->cur_path_idx].flags 
 	    & SHIM6_DATA_TRANSLATE) {	
 		hdr_len = x->type->hdr_offset(x, skb, &prevhdr);
